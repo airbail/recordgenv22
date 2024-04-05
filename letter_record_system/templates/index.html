@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outward Management System</title>
+</head>
+<body>
+    <h1>Outward Management System</h1>
+    <form action="/" method="post">
+        <label for="sender">Sender:</label><br>
+        <input type="text" id="sender" name="sender" required><br>
+        <label for="recipient">Recipient:</label><br>
+        <input type="text" id="recipient" name="recipient" required><br>
+        <label for="subject">Subject:</label><br>
+        <input type="text" id="subject" name="subject" required><br><br>
+        <button type="submit">Generate Document Number</button>
+    </form>
+    {% if document_number %}
+    <p>Document Number: {{ document_number }}</p>
+    {% endif %}
+    
+    <h2>Previous Records</h2>
+    <table border="1">
+        <tr>
+            <th>Document Number</th>
+            <th>Date</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Subject</th>
+            <th>View</th>
+            <th>Upload PDF</th>
+            <th>Delete</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record[0] }}</td>
+            <td>{{ record[1] }}</td>
+            <td>{{ record[2] }}</td>
+            <td>{{ record[3] }}</td>
+            <td>{{ record[4] }}</td>
+            <td><a href="{{ url_for('view_files') }}">View</a></td> <!-- Updated URL -->
+            <td>
+                <form action="{{ url_for('upload_pdf', document_number=document_number) }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="pdf" required>
+    <button type="submit">Upload PDF</button>
+</form>
+
+            </td>
+            <td><a href="{{ url_for('delete_record', record_id=record[0]) }}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
